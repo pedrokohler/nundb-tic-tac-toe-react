@@ -16,7 +16,7 @@ const Container = styled.div`
 `;
 
 
-const game = new Game();
+const game = new Game(5);
 const maxPlays = game.rowSize ** 2;
 
 const App = () =>  {
@@ -34,7 +34,8 @@ const App = () =>  {
   return (
   <Container>
     <Board squares={board} handleSquareClick={handleSquareClick}/>
-    <p>{winner
+    <p>
+      {winner
         ? `Winner: ${winner}`
         : (plays < maxPlays ? 'Click a square!' : 'No winner')
       }

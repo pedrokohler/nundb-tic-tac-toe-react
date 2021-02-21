@@ -1,11 +1,11 @@
 class Game {
-    constructor() {
-        this.resetGame();
+    constructor(rowSize) {
+        this.resetGame(rowSize);
     }
 
-    resetGame(){
+    resetGame(rowSize){
         this.winner = null;
-        this.rowSize = 3;
+        this.rowSize = rowSize;
         this.board = new Array(this.rowSize ** 2).fill('');
         this.symbols = ['X', 'O'];
         this.currentSymbol = this.symbols[0];
@@ -28,14 +28,6 @@ class Game {
         return this.board[squareIndex] === '' && !this.winner;
     }
 
-    getColumn(squareIndex){
-        return squareIndex % this.rowSize;
-    }
-
-    getRow(squareIndex) {
-        return Math.floor(squareIndex / this.rowSize);
-    }
-
     checkForWinnerAndSet(squareIndex){
         const column = this.getColumn(squareIndex);
         const row = this.getRow(squareIndex);
@@ -48,14 +40,6 @@ class Game {
         }
     }
 
-    checkSquaresForWinner(squares) {
-        const targetSymbol = squares[0];
-        if (squares.every((symbol) => symbol === targetSymbol)){
-            return targetSymbol;
-        }
-        return false;
-    }
-
     checkColumnForWinner(column){
         const squares = this.board.filter((_, i) => this.getColumn(i) === column);
         return this.checkSquaresForWinner(squares);
@@ -64,6 +48,19 @@ class Game {
     checkRowForWinner(row){
         const squares = this.board.filter((_, i) => this.getRow(i) === row);
         return this.checkSquaresForWinner(squares);
+    }
+
+    checkDiagonalsForWinner(){
+        return this.checkSquaresForWinner(this.getDescendingDiagonalSquares())
+            || this.checkSquaresForWinner(this.getAscendingDiagonalSquares());
+    }
+
+    checkSquaresForWinner(squares) {
+        const targetSymbol = squares[0];
+        if (squares.every((symbol) => symbol === targetSymbol)){
+            return targetSymbol;
+        }
+        return false;
     }
 
     getDescendingDiagonalSquares() {
@@ -84,9 +81,12 @@ class Game {
         });
     }
 
-    checkDiagonalsForWinner(){
-        return this.checkSquaresForWinner(this.getDescendingDiagonalSquares())
-            || this.checkSquaresForWinner(this.getAscendingDiagonalSquares());
+    getColumn(squareIndex){
+        return squareIndex % this.rowSize;
+    }
+
+    getRow(squareIndex) {
+        return Math.floor(squareIndex / this.rowSize);
     }
 }
 

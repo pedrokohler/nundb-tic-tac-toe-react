@@ -2,8 +2,8 @@ import styled from 'styled-components';
 import Square from './Square';
 
 const Container = styled.div`
-    height: 300px;
-    width: 300px;
+    height: ${({ boardSize }) => `${boardSize}px`};
+    width: ${({ boardSize }) => `${boardSize}px`};
 
     display: flex;
     flex-direction: row;
@@ -13,11 +13,14 @@ const Container = styled.div`
 `;
 
 const Board = ({ squares, handleSquareClick }) => {
+    const boardSize = 300;
+    const squareSize = 300 / Math.sqrt(squares.length);
 
     return (
-        <Container>
+        <Container boardSize={boardSize}>
             {squares.map((symbol, i) => (
                 <Square
+                    squareSize={squareSize}
                     key={i}
                     onClick={() => { handleSquareClick(i); }}
                 >

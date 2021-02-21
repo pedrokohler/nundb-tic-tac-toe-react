@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
 const Container = styled.div`
-    width: 98px;
-    height: 98px;
+    width: ${({ squareSize }) => `${squareSize - 2}px`};
+    height: ${({ squareSize }) => `${squareSize - 2}px`};
 
     display: flex;
     flex-direction: column;
