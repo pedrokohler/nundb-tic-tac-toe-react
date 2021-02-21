@@ -5,7 +5,7 @@ class Game {
 
     resetGame(rowSize){
         this.winner = null;
-        this.rowSize = rowSize;
+        this.rowSize = Math.max(3, Math.min(10, rowSize));
         this.board = new Array(this.rowSize ** 2).fill('');
         this.symbols = ['X', 'O'];
         this.currentSymbol = this.symbols[0];

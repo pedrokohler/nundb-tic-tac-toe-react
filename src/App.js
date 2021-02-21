@@ -16,7 +16,7 @@ const Container = styled.div`
 `;
 
 
-const game = new Game(5);
+const game = new Game(3);
 const maxPlays = game.rowSize ** 2;
 
 const App = () =>  {
@@ -29,7 +29,7 @@ const App = () =>  {
     setBoard(game.board);
     setWinner(game.winner);
     setPlays(game.plays);
-  }, [setBoard, setWinner]);
+  }, []);
 
   return (
   <Container>

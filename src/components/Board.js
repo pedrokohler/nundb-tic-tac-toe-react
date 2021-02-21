@@ -12,9 +12,11 @@ const Container = styled.div`
     flex-wrap: wrap;
 `;
 
+
+const boardSize = 300;
+
 const Board = ({ squares, handleSquareClick }) => {
-    const boardSize = 300;
-    const squareSize = 300 / Math.sqrt(squares.length);
+    const squareSize = boardSize / Math.sqrt(squares.length);
 
     return (
         <Container boardSize={boardSize}>
