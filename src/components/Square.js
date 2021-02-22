@@ -1,4 +1,6 @@
+import React from 'react';
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
 
 const Container = styled.div`
     width: ${({ squareSize }) => `${squareSize - 2}px`};
@@ -23,8 +25,19 @@ const Container = styled.div`
     user-select: none; /* Non-prefixed version, currently */
 `;
 
-const Square = ({ children, ...props }) => (
-    <Container {...props}>{children}</Container>
+const Square = ({ children, squareSize, onClick }) => (
+  <Container
+    squareSize={squareSize}
+    onClick={onClick}
+  >
+    {children}
+  </Container>
 );
+
+Square.propTypes = {
+  squareSize: PropTypes.number.isRequired,
+  children: PropTypes.string.isRequired,
+  onClick: PropTypes.func.isRequired,
+};
 
 export default Square;
