@@ -4,7 +4,7 @@ import {
   computeNewBoard,
   computeNewSymbol,
   computeWinner,
-} from './domain/aggregate';
+} from './domain/game';
 
 export const handleResetState = (state, action) => {
   const { boardSize } = action.payload;

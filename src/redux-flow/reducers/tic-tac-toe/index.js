@@ -6,7 +6,7 @@ import {
   handleResetState,
   handleFillSquare,
 } from './handlers';
-import { initialState } from './domain/aggregate';
+import { initialState } from './domain/game';
 
 const ticTacToe = (state = initialState(), action) => {
   switch (action.type) {
