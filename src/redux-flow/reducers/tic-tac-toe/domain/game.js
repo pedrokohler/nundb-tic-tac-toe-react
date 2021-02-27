@@ -1,3 +1,12 @@
+import Promise from 'bluebird';
+
+export const messWithState = (state) => Promise.delay(1).then(() => {
+  Promise.delay(1).then(() => {
+    // state.maxPlays = 1;
+    console.log(state);
+  });
+});
+
 export const initialState = (rowSize = 3) => {
   const maxPlays = rowSize ** 2;
   return {
@@ -9,7 +18,6 @@ export const initialState = (rowSize = 3) => {
     plays: 0,
   };
 };
-
 export const computeNewBoard = ({ board, currentSymbol, squareIndex }) => board
   .map((symbol, i) => (
     squareIndex === i
@@ -81,4 +89,30 @@ export const computeWinner = ({ board, squareIndex }) => {
               || checkDiagonalsForWinner(board);
 
   return winner || null;
+};
+
+export const computeNewState = (state, squareIndex) => {
+  if (!canFill({ ...state, squareIndex })) {
+    return state;
+  }
+
+  const board = computeNewBoard({ ...state, squareIndex });
+  const plays = state.plays + 1;
+  const currentSymbol = computeNewSymbol({
+    ...state,
+    plays,
+  });
+
+  const winner = computeWinner({
+    board,
+    squareIndex,
+  });
+
+  return {
+    ...state,
+    board,
+    plays,
+    winner,
+    currentSymbol,
+  };
 };

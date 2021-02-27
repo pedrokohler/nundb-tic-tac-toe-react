@@ -10,6 +10,9 @@ import {
   checkColumnForWinner,
   checkRowForWinner,
   checkDiagonalsForWinner,
+  messWithState,
+  computeWinner,
+  computeNewState,
 } from '../redux-flow/reducers/tic-tac-toe/domain/game';
 
 describe('GAME', () => {
@@ -18,10 +21,12 @@ describe('GAME', () => {
     beforeEach(() => {
       state = initialState();
     });
+
     it('Should start with X playing, 0 plays and no winner', () => {
       expect(state).toHaveProperty('currentSymbol', 'X');
       expect(state).toHaveProperty('winner', null);
       expect(state).toHaveProperty('plays', 0);
+      messWithState(state);
     });
 
     it('Should have X and O symbols', () => {
@@ -115,6 +120,7 @@ describe('GAME', () => {
     it('Should return the symbol for a winning sequence of squares', () => {
       expect(checkSquaresForWinner(squares)).toBe(symbol);
     });
+
     it('Should return false for a non-winning sequence of squares', () => {
       squares[2] = otherSymbol;
       expect(checkSquaresForWinner(squares)).toBe(false);
@@ -193,6 +199,37 @@ describe('GAME', () => {
         'X', '',
       ];
       expect(checkDiagonalsForWinner(board)).toBe(false);
+    });
+  });
+
+  describe('computeNewState', () => {
+    it('Should not return a winner if there is not winner ! foring board', () => {
+      const state = initialState(3);
+      state.currentSymbol = 'O';
+      state.board = [
+        'X', '', '',
+        'X', '', '',
+        '', '', '',
+      ];
+      const state5 = computeNewState(state, 6);
+      expect(state5.winner).toBe(null);
+      expect(state5.board).toEqual([
+        'X', '', '',
+        'X', '', '',
+        'O', '', '',
+      ]);
+    });
+
+    it('Should should return a winner if there is a diagonal winner', () => {
+      const state = initialState(3);
+      const state1 = computeNewState(state, 0);
+      const state2 = computeNewState(state1, 3);
+      const state3 = computeNewState(state2, 4);
+      const state4 = computeNewState(state3, 5);
+      const state5 = computeNewState(state4, 8);
+
+      expect(state4.winner).toBe(null);
+      expect(state5.winner).toBe('X');
     });
   });
 });
