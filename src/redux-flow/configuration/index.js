@@ -1,4 +1,4 @@
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
 import rootReducer from '../reducers';
 import { dbMiddleware } from '../../nun';
 
@@ -7,8 +7,10 @@ export default ({ initialState } = {}) => {
   const store = createStore(
     rootReducer,
     initialState,
-    applyMiddleware(dbMiddleware),
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+    compose(
+      applyMiddleware(dbMiddleware),
+      window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+    ),
   );
   /* eslint-enable */
 

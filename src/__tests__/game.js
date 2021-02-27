@@ -11,7 +11,6 @@ import {
   checkRowForWinner,
   checkDiagonalsForWinner,
   messWithState,
-  computeWinner,
   computeNewState,
 } from '../redux-flow/reducers/tic-tac-toe/domain/game';
 
