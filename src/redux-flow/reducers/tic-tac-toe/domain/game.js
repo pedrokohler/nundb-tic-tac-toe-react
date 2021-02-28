@@ -1,12 +1,3 @@
-import Promise from 'bluebird';
-
-export const messWithState = (state) => Promise.delay(1).then(() => {
-  Promise.delay(1).then(() => {
-    // state.maxPlays = 1;
-    console.log(state);
-  });
-});
-
 export const initialState = (rowSize = 3) => {
   const maxPlays = rowSize ** 2;
   return {

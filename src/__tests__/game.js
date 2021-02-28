@@ -10,7 +10,6 @@ import {
   checkColumnForWinner,
   checkRowForWinner,
   checkDiagonalsForWinner,
-  messWithState,
   computeNewState,
   join,
 } from '../redux-flow/reducers/tic-tac-toe/domain/game';
@@ -26,7 +25,6 @@ describe('GAME', () => {
       expect(state).toHaveProperty('currentSymbol', 'X');
       expect(state).toHaveProperty('winner', null);
       expect(state).toHaveProperty('plays', 0);
-      messWithState(state);
     });
 
     it('Should have X and O symbols', () => {
@@ -238,8 +236,8 @@ describe('GAME', () => {
 
     it('Should should return a winner if there is a diagonal winner', () => {
       const state = initialState(3);
-      state.X = "Mateus";
-      state.O = "Jose";
+      state.X = 'Mateus';
+      state.O = 'Jose';
       const state1 = computeNewState(state, 0, 'X');
       const state2 = computeNewState(state1, 3, 'O');
       const state3 = computeNewState(state2, 4, 'X');
