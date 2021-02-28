@@ -1,17 +1,17 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 import rootReducer from '../reducers';
 import { dbMiddleware } from '../../nun';
+import devtools from './devtools';
 
 export default ({ initialState } = {}) => {
-  /* eslint-disable no-underscore-dangle */
   const store = createStore(
     rootReducer,
     initialState,
     compose(
       applyMiddleware(dbMiddleware),
+      devtools(),
     ),
   );
-  /* eslint-enable */
 
   return store;
 };
