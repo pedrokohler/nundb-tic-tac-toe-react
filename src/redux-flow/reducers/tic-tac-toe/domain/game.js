@@ -10,6 +10,8 @@ export const messWithState = (state) => Promise.delay(1).then(() => {
 export const initialState = (rowSize = 3) => {
   const maxPlays = rowSize ** 2;
   return {
+    X: null,
+    O: null,
     winner: null,
     maxPlays,
     board: new Array(maxPlays).fill(''),
@@ -27,7 +29,15 @@ export const computeNewBoard = ({ board, currentSymbol, squareIndex }) => board
 
 export const computeNewSymbol = ({ plays, symbols }) => symbols[plays % symbols.length];
 
-export const canFill = ({ board, squareIndex, winner }) => board[squareIndex] === '' && !winner;
+export const canFill = ({
+  board,
+  squareIndex,
+  winner,
+  X,
+  O,
+  currentSymbol,
+  player,
+}) => (X && O && board[squareIndex] === '' && !winner && (currentSymbol === player));
 
 export const checkSquaresForWinner = (squares) => {
   const targetSymbol = squares[0];
@@ -91,8 +101,17 @@ export const computeWinner = ({ board, squareIndex }) => {
   return winner || null;
 };
 
-export const computeNewState = (state, squareIndex) => {
-  if (!canFill({ ...state, squareIndex })) {
+export const join = (state, symbol, name) => {
+  if (!state[symbol]) {
+    return {
+      ...state,
+      [symbol]: name,
+    };
+  }
+  return state;
+};
+export const computeNewState = (state, squareIndex, player) => {
+  if (!canFill({ ...state, squareIndex, player })) {
     return state;
   }
 

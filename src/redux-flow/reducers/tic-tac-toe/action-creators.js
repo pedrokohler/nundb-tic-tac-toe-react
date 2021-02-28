@@ -1,6 +1,7 @@
 import {
   RESET_GAME,
   FILL_SQUARE,
+  JOIN,
 } from './actions';
 
 export const resetGame = (boardSize) => ({
@@ -10,9 +11,18 @@ export const resetGame = (boardSize) => ({
   },
 });
 
-export const fillSquare = (squareIndex) => ({
+export const fillSquare = (squareIndex, player) => ({
   type: FILL_SQUARE,
   payload: {
     squareIndex,
+    player,
+  },
+});
+
+export const join = (name, symbol) => ({
+  type: JOIN,
+  payload: {
+    name,
+    symbol,
   },
 });

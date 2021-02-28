@@ -12,6 +12,7 @@ import {
   checkDiagonalsForWinner,
   messWithState,
   computeNewState,
+  join,
 } from '../redux-flow/reducers/tic-tac-toe/domain/game';
 
 describe('GAME', () => {
@@ -81,12 +82,16 @@ describe('GAME', () => {
     it('Should return true for unfilled square and no winner', () => {
       expect(canFill({
         board,
+        X: 'asdjkja',
+        O: 'asdjkja',
         squareIndex: 0,
         winner: null,
       })).toBe(true);
     });
     it('Should return false for filled square and no winner', () => {
       expect(canFill({
+        X: 'asdjkja',
+        O: 'asdjkja',
         board,
         squareIndex: 2,
         winner: null,
@@ -94,6 +99,8 @@ describe('GAME', () => {
     });
     it('Should return false for filled square and some winner', () => {
       expect(canFill({
+        X: 'asdjkja',
+        O: 'asdjkja',
         board,
         squareIndex: 2,
         winner: 'Some',
@@ -101,6 +108,8 @@ describe('GAME', () => {
     });
     it('Should return false for unfilled square and some winner', () => {
       expect(canFill({
+        X: 'asdjkja',
+        O: 'asdjkja',
         board,
         squareIndex: 0,
         winner: 'Some',
@@ -201,16 +210,24 @@ describe('GAME', () => {
     });
   });
 
+  describe('join', () => {
+    it('Shold not allow to join if the symbol is already present', () => {
+      const state = { X: 'Mateus' };
+      expect(join(state, 'X', 'Jose').X).toBe('Mateus');
+    });
+  });
   describe('computeNewState', () => {
     it('Should not return a winner if there is not winner ! foring board', () => {
       const state = initialState(3);
+      state.X = 'Mateus';
+      state.O = 'Jose';
       state.currentSymbol = 'O';
       state.board = [
         'X', '', '',
         'X', '', '',
         '', '', '',
       ];
-      const state5 = computeNewState(state, 6);
+      const state5 = computeNewState(state, 6, 'O');
       expect(state5.winner).toBe(null);
       expect(state5.board).toEqual([
         'X', '', '',
@@ -221,11 +238,13 @@ describe('GAME', () => {
 
     it('Should should return a winner if there is a diagonal winner', () => {
       const state = initialState(3);
-      const state1 = computeNewState(state, 0);
-      const state2 = computeNewState(state1, 3);
-      const state3 = computeNewState(state2, 4);
-      const state4 = computeNewState(state3, 5);
-      const state5 = computeNewState(state4, 8);
+      state.X = "Mateus";
+      state.O = "Jose";
+      const state1 = computeNewState(state, 0, 'X');
+      const state2 = computeNewState(state1, 3, 'O');
+      const state3 = computeNewState(state2, 4, 'X');
+      const state4 = computeNewState(state3, 5, 'O');
+      const state5 = computeNewState(state4, 8, 'X');
 
       expect(state4.winner).toBe(null);
       expect(state5.winner).toBe('X');

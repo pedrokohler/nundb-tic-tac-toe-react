@@ -8,16 +8,23 @@ const dbMiddleware = (store) => {
     ignore = true;
     store.dispatch(action.value);
   });
-  nun.getValue('lastState').then((state) => {
+
+  nun.getValue('lastState4').then((state) => {
     ignore = true;
-    store.dispatch({ type: 'newState', state });
+    store.dispatch({ type: 'newState', state: state.ticTacToe });
   });
+
   return (next) => (action) => {
-    next(action);
+    const internalAction = {
+      ...action,
+      $$nunDb: ignore,
+    };
     if (!ignore) {
       nun.setValue('lastEvent', action);
-      nun.setValue('lastState', store.getState());
+      nun.setValue('lastState4', store.getState());
     }
+
+    next(internalAction);
     ignore = false;
   };
 };

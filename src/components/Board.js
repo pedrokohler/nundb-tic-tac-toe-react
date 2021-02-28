@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { fillSquare } from '../redux-flow/reducers/tic-tac-toe/action-creators';
+import { fillSquare, join, resetGame } from '../redux-flow/reducers/tic-tac-toe/action-creators';
 import Square from './Square';
 
 const Container = styled.div`
@@ -25,6 +25,7 @@ const Board = () => {
 
   useEffect(() => {
     setSquareSize(getSquareSize(board));
+    dispatch(join(localStorage.getItem('me'), localStorage.getItem('me')));
   }, [board]);
 
   return (
@@ -35,11 +36,12 @@ const Board = () => {
           // no other possible key can be used, so disabling eslint
           // eslint-disable-next-line react/no-array-index-key
           key={i}
-          onClick={() => { dispatch(fillSquare(i)); }}
+          onClick={() => { dispatch(fillSquare(i, localStorage.getItem('me'))); }}
         >
           {symbol}
         </Square>
       ))}
+      <button type="button" onClick={() => dispatch(resetGame())}>Clean</button>
     </Container>
   );
 };

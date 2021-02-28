@@ -9,7 +9,6 @@ export default ({ initialState } = {}) => {
     initialState,
     compose(
       applyMiddleware(dbMiddleware),
-      window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
     ),
   );
   /* eslint-enable */
