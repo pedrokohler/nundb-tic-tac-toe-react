@@ -1,9 +1,10 @@
 export const symbols = Object.freeze(['X', 'O']);
 
 export const initialState = () => {
-  const maxPlays = 3 ** 2;
-  const rows = new Array(3).fill([]);
-  const board = rows.map(() => new Array(3).fill(''));
+  const BOARD_SIZE = 3;
+  const maxPlays = BOARD_SIZE ** 2;
+  const rows = new Array(BOARD_SIZE).fill([]);
+  const board = rows.map(() => new Array(BOARD_SIZE).fill(''));
   const [firstSymbol] = symbols;
   return {
     players: [],
@@ -87,9 +88,9 @@ const canFillSquare = ({
   state, row, column, player,
 }) => {
   const nextPlayer = getNextPlayer(state);
-  const rightPlayer = !(player !== nextPlayer);
-  const notFilled = !(state.board[row][column]);
-  const notOver = !(state.winner);
+  const rightPlayer = player === nextPlayer;
+  const notFilled = !state.board[row][column];
+  const notOver = !state.winner;
   return rightPlayer && notFilled && notOver;
 };
 
