@@ -20,10 +20,11 @@ const squareSize = boardSize / 3;
 
 const Board = () => {
   const { board } = useSelector((state) => state.ticTacToe);
+  const { userName } = useSelector((state) => state.identification);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(join(localStorage.getItem('me'), localStorage.getItem('me')));
+    dispatch(join(userName));
   }, [board]);
 
   return (
