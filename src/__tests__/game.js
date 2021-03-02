@@ -3,7 +3,7 @@ import {
   symbols,
   tryToFillSquare,
   join,
-} from '../redux-flow/reducers/tic-tac-toe/domain/game';
+} from '../domain/game';
 
 describe('GAME', () => {
   describe('Initial state', () => {

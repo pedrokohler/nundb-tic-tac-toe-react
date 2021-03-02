@@ -2,7 +2,7 @@ import {
   initialState,
   tryToFillSquare,
   join,
-} from './domain/game';
+} from '../../../domain/game';
 
 export const handleResetState = () => initialState();
 

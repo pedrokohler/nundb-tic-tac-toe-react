@@ -8,7 +8,7 @@ import {
   handleFillSquare,
   handleJoin,
 } from './handlers';
-import { initialState } from './domain/game';
+import { initialState } from '../../../domain/game';
 
 const ticTacToe = (state = initialState(), action) => {
   switch (action.type) {
