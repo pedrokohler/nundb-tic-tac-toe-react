@@ -22,3 +22,5 @@ export const handleJoin = (state, action) => {
   const newState = join({ state, player });
   return newState;
 };
+
+export const handleSyncGameState = (_, action) => action.payload.state;

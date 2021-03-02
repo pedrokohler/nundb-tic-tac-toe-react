@@ -2,6 +2,7 @@ import {
   RESET_GAME,
   FILL_SQUARE,
   JOIN,
+  SYNC_GAME_STATE,
 } from './actions';
 
 export const resetGame = (boardSize) => ({
@@ -22,5 +23,12 @@ export const join = (player) => ({
   type: JOIN,
   payload: {
     player,
+  },
+});
+
+export const syncGameState = (state) => ({
+  type: SYNC_GAME_STATE,
+  payload: {
+    state,
   },
 });

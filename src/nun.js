@@ -1,4 +1,5 @@
 import NunDb from 'nun-db';
+import { syncGameState } from './redux-flow/reducers/tic-tac-toe/action-creators';
 
 const nun = new NunDb('wss://ws.nundb.org', 'tic-tac-toe', 'tic-tac-toe12i3ukjsd');
 
@@ -11,7 +12,7 @@ const dbMiddleware = (store) => {
 
   nun.getValue('lastState4').then((state) => {
     ignore = true;
-    store.dispatch({ type: 'newState', state: state.ticTacToe });
+    store.dispatch(syncGameState(state.ticTacToe));
   });
 
   return (next) => (action) => {

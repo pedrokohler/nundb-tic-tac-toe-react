@@ -2,11 +2,13 @@ import {
   FILL_SQUARE,
   RESET_GAME,
   JOIN,
+  SYNC_GAME_STATE,
 } from './actions';
 import {
   handleResetState,
   handleFillSquare,
   handleJoin,
+  handleSyncGameState,
 } from './handlers';
 import { initialState } from '../../../domain/game';
 
@@ -18,8 +20,8 @@ const ticTacToe = (state = initialState(), action) => {
       return handleFillSquare(state, action);
     case JOIN:
       return handleJoin(state, action);
-    case 'newState':
-      return action.state;
+    case SYNC_GAME_STATE:
+      return handleSyncGameState(state, action);
     default:
       return state;
   }
