@@ -1,20 +1,24 @@
 import {
   initialState,
-  computeNewState,
+  tryToFillSquare,
   join,
 } from './domain/game';
 
-export const handleResetState = (state, action) => {
-  const { boardSize } = action.payload;
-  return initialState(boardSize);
-};
+export const handleResetState = () => initialState();
 
 export const handleFillSquare = (state, action) => {
-  const newState = computeNewState(state, action.payload.squareIndex, action.payload.player);
+  const { row, column, player } = action.payload;
+  const newState = tryToFillSquare({
+    state,
+    row,
+    column,
+    player,
+  });
   return newState;
 };
 
 export const handleJoin = (state, action) => {
-  const newState = join(state, action.payload.symbol, action.payload.name);
+  const { player } = action.payload;
+  const newState = join({ state, player });
   return newState;
 };

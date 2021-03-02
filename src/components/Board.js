@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { fillSquare, join, resetGame } from '../redux-flow/reducers/tic-tac-toe/action-creators';
@@ -16,31 +16,33 @@ const Container = styled.div`
 `;
 
 const boardSize = 300;
-const getSquareSize = (board) => boardSize / Math.sqrt(board.length);
+const squareSize = boardSize / 3;
 
 const Board = () => {
   const { board } = useSelector((state) => state.ticTacToe);
   const dispatch = useDispatch();
-  const [squareSize, setSquareSize] = useState(getSquareSize(board));
 
   useEffect(() => {
-    setSquareSize(getSquareSize(board));
     dispatch(join(localStorage.getItem('me'), localStorage.getItem('me')));
   }, [board]);
 
   return (
     <Container boardSize={boardSize}>
-      {board.map((symbol, i) => (
+      {board.map((row, rowIndex) => row.map((symbol, columnIndex) => (
         <Square
           squareSize={squareSize}
-          // no other possible key can be used, so disabling eslint
-          // eslint-disable-next-line react/no-array-index-key
-          key={i}
-          onClick={() => { dispatch(fillSquare(i, localStorage.getItem('me'))); }}
+          key={String(rowIndex) + String(columnIndex)}
+          onClick={() => {
+            dispatch(fillSquare({
+              column: columnIndex,
+              row: rowIndex,
+              player: localStorage.getItem('me'),
+            }));
+          }}
         >
           {symbol}
         </Square>
-      ))}
+      )))}
       <button type="button" onClick={() => dispatch(resetGame())}>Clean</button>
     </Container>
   );

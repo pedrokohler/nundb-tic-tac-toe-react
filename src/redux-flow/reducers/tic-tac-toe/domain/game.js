@@ -16,6 +16,9 @@ export const initialState = () => {
 };
 
 export const join = ({ state, player }) => {
+  if (!player || state.players.includes(player)) {
+    return state;
+  }
   const MAX_NUMBER_OF_PLAYERS = 2;
   const newPlayers = [...state.players, player].slice(0, MAX_NUMBER_OF_PLAYERS);
   return {

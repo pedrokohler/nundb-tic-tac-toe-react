@@ -11,18 +11,16 @@ export const resetGame = (boardSize) => ({
   },
 });
 
-export const fillSquare = (squareIndex, player) => ({
+export const fillSquare = ({ row, column, player }) => ({
   type: FILL_SQUARE,
   payload: {
-    squareIndex,
-    player,
+    row, column, player,
   },
 });
 
-export const join = (name, symbol) => ({
+export const join = (player) => ({
   type: JOIN,
   payload: {
-    name,
-    symbol,
+    player,
   },
 });

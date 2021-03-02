@@ -45,8 +45,37 @@ describe('GAME', () => {
         players: ['Peter', 'Paul'],
       });
     });
+    it('Should not allow null as a player', () => {
+      const state = initialState();
+      const stateWithoutPlayers = join({ state, player: null });
+      expect(stateWithoutPlayers).toEqual({
+        ...state,
+        players: [],
+      });
+    });
+    it('Should not allow including the same player twice', () => {
+      const state = initialState();
+      const stateWithOnePlayer = join({ state, player: 'Peter' });
+      const stateWithStillOnePlayer = join({ state: stateWithOnePlayer, player: 'Peter' });
+      expect(stateWithStillOnePlayer).toEqual({
+        ...state,
+        players: ['Peter'],
+      });
+    });
   });
   describe('Try to fill square', () => {
+    it('Should not allow a no player to play', () => {
+      const state = initialState();
+      state.players = ['Peter'];
+      const sameStateAsBefore = tryToFillSquare({
+        state, row: 0, column: 0, player: null,
+      });
+      expect(sameStateAsBefore.board).toEqual([
+        ['', '', ''],
+        ['', '', ''],
+        ['', '', ''],
+      ]);
+    });
     it('Should update the next symbol after a new square is filled', () => {
       const state = initialState();
       state.players = ['Peter', 'Paul'];
