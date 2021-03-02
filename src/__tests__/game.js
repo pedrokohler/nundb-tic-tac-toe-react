@@ -1,251 +1,248 @@
 import {
   initialState,
-  computeNewBoard,
-  computeNewSymbol,
-  canFill,
-  checkSquaresForWinner,
-  getRowSize,
-  getColumn,
-  getRow,
-  checkColumnForWinner,
-  checkRowForWinner,
-  checkDiagonalsForWinner,
-  computeNewState,
+  symbols,
+  tryToFillSquare,
   join,
 } from '../redux-flow/reducers/tic-tac-toe/domain/game';
 
 describe('GAME', () => {
-  describe('initialState', () => {
-    let state;
-    beforeEach(() => {
-      state = initialState();
-    });
+  describe('Initial state', () => {
+    it('Should have the correct properties and values', () => {
+      const state = initialState();
 
-    it('Should start with X playing, 0 plays and no winner', () => {
-      expect(state).toHaveProperty('currentSymbol', 'X');
+      expect(state).toHaveProperty('players', []);
       expect(state).toHaveProperty('winner', null);
+      expect(state).toHaveProperty('maxPlays', 9);
+      expect(state).toHaveProperty('board', new Array(3).fill([]).map(() => new Array(3).fill('')));
+      expect(state).toHaveProperty('nextSymbol', symbols[0]);
       expect(state).toHaveProperty('plays', 0);
     });
-
-    it('Should have X and O symbols', () => {
-      expect(state).toHaveProperty('symbols', expect.arrayContaining(['X', 'O']));
-    });
-
-    it('Should create a 3x3 board with 9 maximum plays if no parameter is passed', () => {
-      expect(state).toHaveProperty('board');
-      expect(state).toHaveProperty('maxPlays', 9);
-      expect(state.board).toHaveLength(9);
-    });
-
-    it('Should create a NxN board with N² maximum plays if N is passed as a parameter', () => {
-      const state4 = initialState(4);
-      expect(state4).toHaveProperty('board');
-      expect(state4).toHaveProperty('maxPlays', 4 * 4);
-      expect(state4.board).toHaveLength(4 * 4);
-
-      const state100 = initialState(100);
-      expect(state100).toHaveProperty('board');
-      expect(state100).toHaveProperty('maxPlays', 100 * 100);
-      expect(state100.board).toHaveLength(100 * 100);
-    });
   });
-
-  describe('computeNewBoard', () => {
-    it('Should compute a new board correctly', () => {
-      const board = ['', '', 'X'];
-      const newBoard = computeNewBoard({
-        board,
-        currentSymbol: 'O',
-        squareIndex: 1,
+  describe('Join game', () => {
+    it('Should add the player to the players list when the player joins the game', () => {
+      const state = initialState();
+      expect(join({ state, player: 'Peter' })).toEqual({
+        ...state,
+        players: ['Peter'],
       });
-      expect(newBoard).toEqual(['', 'O', 'X']);
+    });
+    it('Should allow up to two players in a game', () => {
+      const state = initialState();
+      const stateWithOnePlayer = join({ state, player: 'Peter' });
+      const stateWithTwoPlayers = join({ state: stateWithOnePlayer, player: 'Paul' });
+      expect(stateWithTwoPlayers).toEqual({
+        ...state,
+        players: ['Peter', 'Paul'],
+      });
+    });
+    it('Should not allow more than two players in a game', () => {
+      const state = initialState();
+      const stateWithOnePlayer = join({ state, player: 'Peter' });
+      const stateWithTwoPlayers = join({ state: stateWithOnePlayer, player: 'Paul' });
+      const stateWithStillTwoPlayers = join({ state: stateWithTwoPlayers, player: 'João' });
+      expect(stateWithStillTwoPlayers).toEqual({
+        ...state,
+        players: ['Peter', 'Paul'],
+      });
     });
   });
-
-  describe('computeNewSymbol', () => {
-    it('Should change from X to O after first play', () => {
-      const symbols = ['X', 'O'];
-      const symbol = computeNewSymbol({ plays: 1, symbols });
-      expect(symbol).toBe('O');
+  describe('Try to fill square', () => {
+    it('Should update the next symbol after a new square is filled', () => {
+      const state = initialState();
+      state.players = ['Peter', 'Paul'];
+      const stateAfterSquareIsFilled = tryToFillSquare({
+        state, row: 0, column: 0, player: 'Peter',
+      });
+      expect(stateAfterSquareIsFilled.nextSymbol).toBe(symbols[1]);
     });
-    it('Should change from O to X after second play', () => {
-      const symbols = ['X', 'O'];
-      const symbol = computeNewSymbol({ plays: 2, symbols });
-      expect(symbol).toBe('X');
+    it('Should increment the amount of plays after a square is successfully filled', () => {
+      const state = initialState();
+      state.players = ['Peter', 'Paul'];
+      const stateAfterSquareIsFilled = tryToFillSquare({
+        state, row: 0, column: 0, player: 'Peter',
+      });
+      expect(stateAfterSquareIsFilled.plays).toBe(1);
     });
-  });
-
-  describe('canFill', () => {
-    const board = ['', '', 'X'];
-    it('Should return true for unfilled square and no winner', () => {
-      expect(canFill({
-        board,
-        X: 'asdjkja',
-        O: 'asdjkja',
-        squareIndex: 0,
-        winner: null,
-      })).toBe(true);
-    });
-    it('Should return false for filled square and no winner', () => {
-      expect(canFill({
-        X: 'asdjkja',
-        O: 'asdjkja',
-        board,
-        squareIndex: 2,
-        winner: null,
-      })).toBe(false);
-    });
-    it('Should return false for filled square and some winner', () => {
-      expect(canFill({
-        X: 'asdjkja',
-        O: 'asdjkja',
-        board,
-        squareIndex: 2,
-        winner: 'Some',
-      })).toBe(false);
-    });
-    it('Should return false for unfilled square and some winner', () => {
-      expect(canFill({
-        X: 'asdjkja',
-        O: 'asdjkja',
-        board,
-        squareIndex: 0,
-        winner: 'Some',
-      })).toBe(false);
-    });
-  });
-
-  describe('checkSquaresForWinner', () => {
-    const symbol = 'D';
-    const otherSymbol = 'N';
-    let squares;
-    beforeEach(() => {
-      squares = new Array(10).fill(symbol);
-    });
-
-    it('Should return the symbol for a winning sequence of squares', () => {
-      expect(checkSquaresForWinner(squares)).toBe(symbol);
-    });
-
-    it('Should return false for a non-winning sequence of squares', () => {
-      squares[2] = otherSymbol;
-      expect(checkSquaresForWinner(squares)).toBe(false);
-    });
-  });
-
-  describe('getRowSize', () => {
-    it('Should return the correct row size for a given board', () => {
-      const rowSize = 3;
-      const board = new Array(rowSize ** 2).fill();
-      expect(getRowSize(board)).toBe(rowSize);
-    });
-  });
-
-  describe('getColumn', () => {
-    it('Should get the correct column', () => {
-      const column = 2;
-      const row = 3;
-      const rowSize = 10;
-      const board = new Array(rowSize ** 2).fill();
-      const squareIndex = row * rowSize + column;
-      expect(getColumn(squareIndex, board)).toBe(column);
-    });
-  });
-
-  describe('getRow', () => {
-    it('Should get the correct row', () => {
-      const column = 1;
-      const row = 4;
-      const rowSize = 6;
-      const board = new Array(rowSize ** 2).fill();
-      const squareIndex = row * rowSize + column;
-      expect(getRow(squareIndex, board)).toBe(row);
-    });
-  });
-
-  describe('checkColumnForWinner', () => {
-    const board = [
-      'X', '',
-      'X', 'X',
-    ];
-
-    it('Should return false for column without winner', () => {
-      expect(checkColumnForWinner(board, 1)).toBe(false);
-    });
-    it('Should return the symbol for column with winner', () => {
-      expect(checkColumnForWinner(board, 0)).toBe('X');
-    });
-  });
-
-  describe('checkRowForWinner', () => {
-    const board = [
-      'X', '',
-      'X', 'X',
-    ];
-
-    it('Should return the symbol for row without winner', () => {
-      expect(checkRowForWinner(board, 1)).toBe('X');
-    });
-    it('Should return false for row with winner', () => {
-      expect(checkRowForWinner(board, 0)).toBe(false);
-    });
-  });
-
-  describe('checkDiagonalsForWinner', () => {
-    it('Should return the symbol for diagonals with winner', () => {
-      const board = [
-        'X', '',
-        'X', 'X',
-      ];
-      expect(checkDiagonalsForWinner(board)).toBe('X');
-    });
-    it('Should return false for diagonals without winner', () => {
-      const board = [
-        'X', '',
-        'X', '',
-      ];
-      expect(checkDiagonalsForWinner(board)).toBe(false);
-    });
-  });
-
-  describe('join', () => {
-    it('Shold not allow to join if the symbol is already present', () => {
-      const state = { X: 'Mateus' };
-      expect(join(state, 'X', 'Jose').X).toBe('Mateus');
-    });
-  });
-  describe('computeNewState', () => {
-    it('Should not return a winner if there is not winner ! foring board', () => {
-      const state = initialState(3);
-      state.X = 'Mateus';
-      state.O = 'Jose';
-      state.currentSymbol = 'O';
-      state.board = [
-        'X', '', '',
-        'X', '', '',
-        '', '', '',
-      ];
-      const state5 = computeNewState(state, 6, 'O');
-      expect(state5.winner).toBe(null);
-      expect(state5.board).toEqual([
-        'X', '', '',
-        'X', '', '',
-        'O', '', '',
+    it('Should add the correct symbol to the board after a square is successfully filled', () => {
+      const state = initialState();
+      state.players = ['Peter', 'Paul'];
+      const stateAfterSquareIsFilled = tryToFillSquare({
+        state, row: 0, column: 0, player: 'Peter',
+      });
+      expect(stateAfterSquareIsFilled.board).toEqual([
+        [symbols[0], '', ''],
+        ['', '', ''],
+        ['', '', ''],
       ]);
     });
-
-    it('Should should return a winner if there is a diagonal winner', () => {
-      const state = initialState(3);
-      state.X = 'Mateus';
-      state.O = 'Jose';
-      const state1 = computeNewState(state, 0, 'X');
-      const state2 = computeNewState(state1, 3, 'O');
-      const state3 = computeNewState(state2, 4, 'X');
-      const state4 = computeNewState(state3, 5, 'O');
-      const state5 = computeNewState(state4, 8, 'X');
-
-      expect(state4.winner).toBe(null);
-      expect(state5.winner).toBe('X');
+    it('Should not allow the wrong player to play', () => {
+      const state = initialState();
+      state.players = ['Peter', 'Paul'];
+      const stateAfterSquareIsFilled = tryToFillSquare({
+        state, row: 0, column: 0, player: 'Paul',
+      });
+      expect(stateAfterSquareIsFilled.board).toEqual([
+        ['', '', ''],
+        ['', '', ''],
+        ['', '', ''],
+      ]);
+    });
+    it('Should not allow a previously filled square to be filled again', () => {
+      const state = initialState();
+      state.players = ['Peter', 'Paul'];
+      const stateAfterFirstSquareIsFilled = tryToFillSquare({
+        state, row: 0, column: 0, player: 'Peter',
+      });
+      const stateAfterAttemptingToFillingSameSquare = tryToFillSquare({
+        state: stateAfterFirstSquareIsFilled, row: 0, column: 0, player: 'Paul',
+      });
+      expect(stateAfterAttemptingToFillingSameSquare.board).toEqual([
+        [symbols[0], '', ''],
+        ['', '', ''],
+        ['', '', ''],
+      ]);
+    });
+    it('Should have winner === null while there is no winner', () => {
+      const state0 = initialState();
+      state0.players = ['Peter', 'Paul'];
+      const state1 = tryToFillSquare({
+        state: state0, row: 0, column: 0, player: 'Peter',
+      });
+      expect(state1.winner).toBe(null);
+    });
+    it('Should calculate the winner in a row', () => {
+      const state0 = initialState();
+      state0.players = ['Peter', 'Paul'];
+      const state1 = tryToFillSquare({
+        state: state0, row: 0, column: 0, player: 'Peter',
+      });
+      const state2 = tryToFillSquare({
+        state: state1, row: 1, column: 0, player: 'Paul',
+      });
+      const state3 = tryToFillSquare({
+        state: state2, row: 0, column: 1, player: 'Peter',
+      });
+      const state4 = tryToFillSquare({
+        state: state3, row: 1, column: 1, player: 'Paul',
+      });
+      const state5 = tryToFillSquare({
+        state: state4, row: 0, column: 2, player: 'Peter',
+      });
+      expect(state5.board).toEqual([
+        [symbols[0], symbols[0], symbols[0]],
+        [symbols[1], symbols[1], ''],
+        ['', '', ''],
+      ]);
+      expect(state5.winner).toBe('Peter');
+    });
+    it('Should calculate the winner in a column', () => {
+      const state0 = initialState();
+      state0.players = ['Peter', 'Paul'];
+      const state1 = tryToFillSquare({
+        state: state0, row: 0, column: 0, player: 'Peter',
+      });
+      const state2 = tryToFillSquare({
+        state: state1, row: 0, column: 1, player: 'Paul',
+      });
+      const state3 = tryToFillSquare({
+        state: state2, row: 1, column: 0, player: 'Peter',
+      });
+      const state4 = tryToFillSquare({
+        state: state3, row: 1, column: 1, player: 'Paul',
+      });
+      const state5 = tryToFillSquare({
+        state: state4, row: 2, column: 0, player: 'Peter',
+      });
+      expect(state5.board).toEqual([
+        [symbols[0], symbols[1], ''],
+        [symbols[0], symbols[1], ''],
+        [symbols[0], '', ''],
+      ]);
+      expect(state5.winner).toBe('Peter');
+    });
+    it('Should calculate the winner in the descending diagonal', () => {
+      const state0 = initialState();
+      state0.players = ['Peter', 'Paul'];
+      const state1 = tryToFillSquare({
+        state: state0, row: 0, column: 0, player: 'Peter',
+      });
+      const state2 = tryToFillSquare({
+        state: state1, row: 0, column: 1, player: 'Paul',
+      });
+      const state3 = tryToFillSquare({
+        state: state2, row: 1, column: 1, player: 'Peter',
+      });
+      const state4 = tryToFillSquare({
+        state: state3, row: 1, column: 2, player: 'Paul',
+      });
+      const state5 = tryToFillSquare({
+        state: state4, row: 2, column: 2, player: 'Peter',
+      });
+      expect(state5.board).toEqual([
+        [symbols[0], symbols[1], ''],
+        ['', symbols[0], symbols[1]],
+        ['', '', symbols[0]],
+      ]);
+      expect(state5.winner).toBe('Peter');
+    });
+    it('Should calculate the winner in the ascending diagonal', () => {
+      const state0 = initialState();
+      state0.players = ['Peter', 'Paul'];
+      const state1 = tryToFillSquare({
+        state: state0, row: 0, column: 0, player: 'Peter',
+      });
+      const state2 = tryToFillSquare({
+        state: state1, row: 0, column: 2, player: 'Paul',
+      });
+      const state3 = tryToFillSquare({
+        state: state2, row: 1, column: 2, player: 'Peter',
+      });
+      const state4 = tryToFillSquare({
+        state: state3, row: 1, column: 1, player: 'Paul',
+      });
+      const state5 = tryToFillSquare({
+        state: state4, row: 2, column: 2, player: 'Peter',
+      });
+      const state6 = tryToFillSquare({
+        state: state5, row: 2, column: 0, player: 'Paul',
+      });
+      expect(state6.board).toEqual([
+        [symbols[0], '', symbols[1]],
+        ['', symbols[1], symbols[0]],
+        [symbols[1], '', symbols[0]],
+      ]);
+      expect(state6.winner).toBe('Paul');
+    });
+    it('Should not allow another move after a winner already exists', () => {
+      const state0 = initialState();
+      state0.players = ['Peter', 'Paul'];
+      const state1 = tryToFillSquare({
+        state: state0, row: 0, column: 0, player: 'Peter',
+      });
+      const state2 = tryToFillSquare({
+        state: state1, row: 0, column: 2, player: 'Paul',
+      });
+      const state3 = tryToFillSquare({
+        state: state2, row: 1, column: 2, player: 'Peter',
+      });
+      const state4 = tryToFillSquare({
+        state: state3, row: 1, column: 1, player: 'Paul',
+      });
+      const state5 = tryToFillSquare({
+        state: state4, row: 2, column: 2, player: 'Peter',
+      });
+      const state6 = tryToFillSquare({
+        state: state5, row: 2, column: 0, player: 'Paul',
+      });
+      const state7 = tryToFillSquare({
+        state: state6, row: 2, column: 1, player: 'Peter',
+      });
+      expect(state7.board).toEqual([
+        [symbols[0], '', symbols[1]],
+        ['', symbols[1], symbols[0]],
+        [symbols[1], '', symbols[0]],
+      ]);
+      expect(state6.winner).toBe('Paul');
     });
   });
 });
