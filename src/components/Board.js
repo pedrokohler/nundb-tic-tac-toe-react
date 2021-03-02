@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { fillSquare, join, resetGame } from '../redux-flow/reducers/tic-tac-toe/action-creators';
+import { fillSquare, join } from '../redux-flow/reducers/tic-tac-toe/action-creators';
 import Square from './Square';
 
 const Container = styled.div`
@@ -37,14 +37,13 @@ const Board = () => {
             dispatch(fillSquare({
               column: columnIndex,
               row: rowIndex,
-              player: localStorage.getItem('me'),
+              player: userName,
             }));
           }}
         >
           {symbol}
         </Square>
       )))}
-      <button type="button" onClick={() => dispatch(resetGame())}>Clean</button>
     </Container>
   );
 };

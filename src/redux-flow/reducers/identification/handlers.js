@@ -5,3 +5,11 @@ export const handleSetIdentification = (state, action) => {
     userName,
   };
 };
+
+export const handleSetRoom = (state, action) => {
+  const { room } = action.payload;
+  return {
+    ...state,
+    room,
+  };
+};
