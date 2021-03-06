@@ -25,7 +25,8 @@ const GamePage = () => {
     winner,
     plays,
     maxPlays,
-    players,
+    X,
+    O,
   } = useSelector((state) => state.ticTacToe);
   const { userName } = useSelector((state) => state.identification);
   const dispatch = useDispatch();
@@ -51,12 +52,12 @@ const GamePage = () => {
       <p>
         Player X:
         {' '}
-        {players[0]}
+        {X}
       </p>
       <p>
         Player O:
         {' '}
-        {players[1]}
+        {O}
       </p>
       <Board />
       <p>{message}</p>

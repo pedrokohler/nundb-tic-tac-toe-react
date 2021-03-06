@@ -7,8 +7,11 @@ export const initialState = () => {
   const board = rows.map(() => new Array(BOARD_SIZE).fill(''));
   const [firstSymbol] = symbols;
   return {
-    players: [],
+    id: (new Date().getTime()),
+    X: null,
+    O: null,
     winner: null,
+    roomName: null,
     maxPlays,
     board,
     nextSymbol: firstSymbol,
@@ -16,15 +19,19 @@ export const initialState = () => {
   };
 };
 
+export const joinRoom = ({ state, roomName }) => ({
+  ...state,
+  roomName,
+});
+
 export const join = ({ state, player }) => {
-  if (!player || state.players.includes(player)) {
-    return state;
-  }
-  const MAX_NUMBER_OF_PLAYERS = 2;
-  const newPlayers = [...state.players, player].slice(0, MAX_NUMBER_OF_PLAYERS);
+  const hasX = !!state.X;
+  if (state.X && state.O) return state;
+  if (hasX && state.X === player) return state;
+  const playerSymbol = hasX ? 'O' : 'X';
   return {
     ...state,
-    players: newPlayers,
+    [playerSymbol]: player,
   };
 };
 
@@ -96,10 +103,7 @@ const canFillSquare = ({
 
 const getNextPlayer = (state) => getPlayerFromSymbol({ state, symbol: state.nextSymbol });
 
-const getPlayerFromSymbol = ({ state, symbol }) => {
-  const nextSymbolIndex = symbols.findIndex((currentSymbol) => currentSymbol === symbol);
-  return state.players[nextSymbolIndex] || null;
-};
+const getPlayerFromSymbol = ({ state, symbol }) => state[symbol];
 
 const computeNewBoard = ({ state, row, column }) => state.board.map((oldRow, oldRowIndex) => {
   if (oldRowIndex !== row) {

@@ -10,11 +10,12 @@ describe('GAME', () => {
     it('Should have the correct properties and values', () => {
       const state = initialState();
 
-      expect(state).toHaveProperty('players', []);
+      expect(state).toHaveProperty('X', null);
+      expect(state).toHaveProperty('O', null);
       expect(state).toHaveProperty('winner', null);
       expect(state).toHaveProperty('maxPlays', 9);
       expect(state).toHaveProperty('board', new Array(3).fill([]).map(() => new Array(3).fill('')));
-      expect(state).toHaveProperty('nextSymbol', symbols[0]);
+      expect(state).toHaveProperty('nextSymbol', 'X');
       expect(state).toHaveProperty('plays', 0);
     });
   });
@@ -23,7 +24,7 @@ describe('GAME', () => {
       const state = initialState();
       expect(join({ state, player: 'Peter' })).toEqual({
         ...state,
-        players: ['Peter'],
+        X: 'Peter',
       });
     });
     it('Should allow up to two players in a game', () => {
@@ -32,7 +33,8 @@ describe('GAME', () => {
       const stateWithTwoPlayers = join({ state: stateWithOnePlayer, player: 'Paul' });
       expect(stateWithTwoPlayers).toEqual({
         ...state,
-        players: ['Peter', 'Paul'],
+        X: 'Peter',
+        O: 'Paul',
       });
     });
     it('Should not allow more than two players in a game', () => {
@@ -42,7 +44,8 @@ describe('GAME', () => {
       const stateWithStillTwoPlayers = join({ state: stateWithTwoPlayers, player: 'João' });
       expect(stateWithStillTwoPlayers).toEqual({
         ...state,
-        players: ['Peter', 'Paul'],
+        X: 'Peter',
+        O: 'Paul',
       });
     });
     it('Should not allow null as a player', () => {
@@ -50,7 +53,6 @@ describe('GAME', () => {
       const stateWithoutPlayers = join({ state, player: null });
       expect(stateWithoutPlayers).toEqual({
         ...state,
-        players: [],
       });
     });
     it('Should not allow including the same player twice', () => {
@@ -59,14 +61,14 @@ describe('GAME', () => {
       const stateWithStillOnePlayer = join({ state: stateWithOnePlayer, player: 'Peter' });
       expect(stateWithStillOnePlayer).toEqual({
         ...state,
-        players: ['Peter'],
+        X: 'Peter',
       });
     });
   });
   describe('Try to fill square', () => {
     it('Should not allow a no player to play', () => {
       const state = initialState();
-      state.players = ['Peter'];
+      state.X = 'Peter';
       const sameStateAsBefore = tryToFillSquare({
         state, row: 0, column: 0, player: null,
       });
@@ -78,7 +80,8 @@ describe('GAME', () => {
     });
     it('Should update the next symbol after a new square is filled', () => {
       const state = initialState();
-      state.players = ['Peter', 'Paul'];
+      state.X = 'Peter';
+      state.O = 'Paul';
       const stateAfterSquareIsFilled = tryToFillSquare({
         state, row: 0, column: 0, player: 'Peter',
       });
@@ -86,7 +89,8 @@ describe('GAME', () => {
     });
     it('Should increment the amount of plays after a square is successfully filled', () => {
       const state = initialState();
-      state.players = ['Peter', 'Paul'];
+      state.X = 'Peter';
+      state.O = 'Paul';
       const stateAfterSquareIsFilled = tryToFillSquare({
         state, row: 0, column: 0, player: 'Peter',
       });
@@ -94,7 +98,8 @@ describe('GAME', () => {
     });
     it('Should add the correct symbol to the board after a square is successfully filled', () => {
       const state = initialState();
-      state.players = ['Peter', 'Paul'];
+      state.X = 'Peter';
+      state.O = 'Paul';
       const stateAfterSquareIsFilled = tryToFillSquare({
         state, row: 0, column: 0, player: 'Peter',
       });
@@ -106,7 +111,8 @@ describe('GAME', () => {
     });
     it('Should not allow the wrong player to play', () => {
       const state = initialState();
-      state.players = ['Peter', 'Paul'];
+      state.X = 'Peter';
+      state.O = 'Paul';
       const stateAfterSquareIsFilled = tryToFillSquare({
         state, row: 0, column: 0, player: 'Paul',
       });
@@ -118,7 +124,8 @@ describe('GAME', () => {
     });
     it('Should not allow a previously filled square to be filled again', () => {
       const state = initialState();
-      state.players = ['Peter', 'Paul'];
+      state.X = 'Peter';
+      state.O = 'Paul';
       const stateAfterFirstSquareIsFilled = tryToFillSquare({
         state, row: 0, column: 0, player: 'Peter',
       });
@@ -133,15 +140,17 @@ describe('GAME', () => {
     });
     it('Should have winner === null while there is no winner', () => {
       const state0 = initialState();
-      state0.players = ['Peter', 'Paul'];
+      state0.X = 'Peter';
+      state0.O = 'Paul';
       const state1 = tryToFillSquare({
         state: state0, row: 0, column: 0, player: 'Peter',
       });
-      expect(state1.winner).toBe(null);
+      expect(state1.winner).toBe(undefined);
     });
     it('Should calculate the winner in a row', () => {
       const state0 = initialState();
-      state0.players = ['Peter', 'Paul'];
+      state0.X = 'Peter';
+      state0.O = 'Paul';
       const state1 = tryToFillSquare({
         state: state0, row: 0, column: 0, player: 'Peter',
       });
@@ -166,7 +175,8 @@ describe('GAME', () => {
     });
     it('Should calculate the winner in a column', () => {
       const state0 = initialState();
-      state0.players = ['Peter', 'Paul'];
+      state0.X = 'Peter';
+      state0.O = 'Paul';
       const state1 = tryToFillSquare({
         state: state0, row: 0, column: 0, player: 'Peter',
       });
@@ -191,7 +201,8 @@ describe('GAME', () => {
     });
     it('Should calculate the winner in the descending diagonal', () => {
       const state0 = initialState();
-      state0.players = ['Peter', 'Paul'];
+      state0.X = 'Peter';
+      state0.O = 'Paul';
       const state1 = tryToFillSquare({
         state: state0, row: 0, column: 0, player: 'Peter',
       });
@@ -216,7 +227,8 @@ describe('GAME', () => {
     });
     it('Should calculate the winner in the ascending diagonal', () => {
       const state0 = initialState();
-      state0.players = ['Peter', 'Paul'];
+      state0.X = 'Peter';
+      state0.O = 'Paul';
       const state1 = tryToFillSquare({
         state: state0, row: 0, column: 0, player: 'Peter',
       });
@@ -244,7 +256,8 @@ describe('GAME', () => {
     });
     it('Should not allow another move after a winner already exists', () => {
       const state0 = initialState();
-      state0.players = ['Peter', 'Paul'];
+      state0.X = 'Peter';
+      state0.O = 'Paul';
       const state1 = tryToFillSquare({
         state: state0, row: 0, column: 0, player: 'Peter',
       });
