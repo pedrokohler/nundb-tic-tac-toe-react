@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { fillSquare, join } from '../redux-flow/reducers/tic-tac-toe/action-creators';
+import { fillSquare } from '../redux-flow/reducers/tic-tac-toe/action-creators';
 import Square from './Square';
 
 const Container = styled.div`
@@ -22,10 +22,6 @@ const Board = () => {
   const { board } = useSelector((state) => state.ticTacToe);
   const { userName } = useSelector((state) => state.identification);
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(join(userName));
-  }, [board]);
 
   return (
     <Container boardSize={boardSize}>

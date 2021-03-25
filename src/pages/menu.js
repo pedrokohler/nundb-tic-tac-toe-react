@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { setIdentification, setRoom } from '../redux-flow/reducers/identification/action-creators';
+import { joinRoom } from '../redux-flow/reducers/tic-tac-toe/action-creators';
 
 const Container = styled.div`
   width: 95vw;
@@ -42,6 +43,8 @@ const MenuPage = () => {
           onClick={(e) => {
             if (!roomName) {
               e.preventDefault();
+            } else {
+              dispatch(joinRoom(roomName));
             }
           }}
         >

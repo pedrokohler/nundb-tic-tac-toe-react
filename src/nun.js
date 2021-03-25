@@ -1,35 +1,40 @@
 import NunDb from 'nun-db';
-import { syncGameState } from './redux-flow/reducers/tic-tac-toe/action-creators';
-import { TIC_TAC_TOE_PREFIX } from './redux-flow/reducers/tic-tac-toe/actions';
+import { syncGameState, join } from './redux-flow/reducers/tic-tac-toe/action-creators';
+import { TIC_TAC_TOE_PREFIX, JOIN_ROOM } from './redux-flow/reducers/tic-tac-toe/actions';
 
 const nun = new NunDb('wss://ws.nundb.org', 'tic-tac-toe', 'tic-tac-toe12i3ukjsd');
 
-let ignore = false;
-const dbMiddleware = (store) => {
-  nun.watch('lastEvent', (action) => {
-    const ticTacToeAction = new RegExp(`^${TIC_TAC_TOE_PREFIX}`);
-    ignore = true;
-    if (ticTacToeAction.test(action.value.type)) { store.dispatch(action.value); }
-  });
+const ticTacToeAction = new RegExp(`^${TIC_TAC_TOE_PREFIX}`);
+const dbMiddleware = (store) => (next) => (action) => {
+  next(action);
+  const myPlayerId = store.getState().ticTacToe.id;
+  const roomName = store.getState().identification.room;
+  if (action.type === JOIN_ROOM) {
+    nun.getValue(roomName).then((state) => {
+      store.dispatch(syncGameState(state.ticTacToe));
+      store.dispatch(join(store.getState().identification.userName));
+    }).catch(() => {
+      // in case the room wasn't created yet
+      store.dispatch(join(store.getState().identification.userName));
+    });
 
-  nun.getValue(store.getState().identification.room).then((state) => {
-    ignore = true;
-    store.dispatch(syncGameState(state.ticTacToe));
-  });
+    nun.watch(`lastEvent-${roomName}`, (nunAction) => {
+      if (nunAction.playerId === myPlayerId) {
+        return false;
+      }
 
-  return (next) => (action) => {
-    const internalAction = {
-      ...action,
-      $$nunDb: ignore,
-    };
-    if (!ignore) {
-      nun.setValue('lastEvent', action);
-      nun.setValue(store.getState().identification.room, store.getState());
-    }
-
-    next(internalAction);
-    ignore = false;
-  };
+      if (ticTacToeAction.test(nunAction.value.type)) {
+        store.dispatch(nunAction.value);
+      }
+      return true;
+    });
+    return;
+  }
+  if (ticTacToeAction.test(action.type) && !action.playerId) {
+    const tmpAction = { ...action, playerId: myPlayerId };
+    nun.setValue(`lastEvent-${roomName}`, tmpAction);
+    nun.setValue(store.getState().identification.room, store.getState());
+  }
 };
 
 export {
