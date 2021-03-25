@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { useParams } from 'react-router-dom';
 import Board from '../components/Board';
-import { resetGame } from '../redux-flow/reducers/tic-tac-toe/action-creators';
+import { resetGame, joinRoom } from '../redux-flow/reducers/tic-tac-toe/action-creators';
+import { setRoom } from '../redux-flow/reducers/identification/action-creators';
 
 const Container = styled.div`
   width: 95vw;
@@ -29,6 +31,7 @@ const GamePage = () => {
     O,
   } = useSelector((state) => state.ticTacToe);
   const { userName } = useSelector((state) => state.identification);
+  const { roomName } = useParams();
   const dispatch = useDispatch();
   const [message, setMessage] = useState(duringGameMessage);
 
@@ -41,6 +44,11 @@ const GamePage = () => {
     }
     return setMessage(duringGameMessage);
   }, [winner, plays, maxPlays]);
+
+  useEffect(() => {
+    dispatch(setRoom(roomName));
+    dispatch(joinRoom(roomName));
+  }, []);
 
   return (
     <Container>
