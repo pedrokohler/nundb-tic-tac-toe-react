@@ -103,7 +103,7 @@ const canFillSquare = ({
 
 const getNextPlayer = (state) => getPlayerFromSymbol({ state, symbol: state.nextSymbol });
 
-const getPlayerFromSymbol = ({ state, symbol }) => state[symbol];
+const getPlayerFromSymbol = ({ state, symbol }) => state[symbol] || null;
 
 const computeNewBoard = ({ state, row, column }) => state.board.map((oldRow, oldRowIndex) => {
   if (oldRowIndex !== row) {

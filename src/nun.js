@@ -14,6 +14,7 @@ const dbMiddleware = (store) => (next) => (action) => {
       store.dispatch(syncGameState(state.ticTacToe));
       store.dispatch(join(store.getState().identification.userName));
     }).catch(() => {
+      // in case the room wasn't created yet
       store.dispatch(join(store.getState().identification.userName));
     });
 

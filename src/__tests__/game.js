@@ -145,7 +145,7 @@ describe('GAME', () => {
       const state1 = tryToFillSquare({
         state: state0, row: 0, column: 0, player: 'Peter',
       });
-      expect(state1.winner).toBe(undefined);
+      expect(state1.winner).toBe(null);
     });
     it('Should calculate the winner in a row', () => {
       const state0 = initialState();
