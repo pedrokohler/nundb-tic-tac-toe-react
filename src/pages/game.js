@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import Board from '../components/Board';
 import { resetGame, joinRoom } from '../redux-flow/reducers/tic-tac-toe/action-creators';
 import { setRoom } from '../redux-flow/reducers/identification/action-creators';
@@ -70,6 +70,9 @@ const GamePage = () => {
       <Board />
       <p>{message}</p>
       <button type="button" onClick={() => dispatch(resetGame())}>Reset Game</button>
+      <Link to="/">
+        <p>Menu</p>
+      </Link>
     </Container>
   );
 };

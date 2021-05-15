@@ -1,6 +1,5 @@
 import {
   initialState,
-  symbols,
   tryToFillSquare,
   join,
 } from '../domain/game';
@@ -85,7 +84,7 @@ describe('GAME', () => {
       const stateAfterSquareIsFilled = tryToFillSquare({
         state, row: 0, column: 0, player: 'Peter',
       });
-      expect(stateAfterSquareIsFilled.nextSymbol).toBe(symbols[1]);
+      expect(stateAfterSquareIsFilled.nextSymbol).toBe('O');
     });
     it('Should increment the amount of plays after a square is successfully filled', () => {
       const state = initialState();
@@ -104,7 +103,7 @@ describe('GAME', () => {
         state, row: 0, column: 0, player: 'Peter',
       });
       expect(stateAfterSquareIsFilled.board).toEqual([
-        [symbols[0], '', ''],
+        ['X', '', ''],
         ['', '', ''],
         ['', '', ''],
       ]);
@@ -133,7 +132,7 @@ describe('GAME', () => {
         state: stateAfterFirstSquareIsFilled, row: 0, column: 0, player: 'Paul',
       });
       expect(stateAfterAttemptingToFillingSameSquare.board).toEqual([
-        [symbols[0], '', ''],
+        ['X', '', ''],
         ['', '', ''],
         ['', '', ''],
       ]);
@@ -167,8 +166,8 @@ describe('GAME', () => {
         state: state4, row: 0, column: 2, player: 'Peter',
       });
       expect(state5.board).toEqual([
-        [symbols[0], symbols[0], symbols[0]],
-        [symbols[1], symbols[1], ''],
+        ['X', 'X', 'X'],
+        ['O', 'O', ''],
         ['', '', ''],
       ]);
       expect(state5.winner).toBe('Peter');
@@ -193,9 +192,9 @@ describe('GAME', () => {
         state: state4, row: 2, column: 0, player: 'Peter',
       });
       expect(state5.board).toEqual([
-        [symbols[0], symbols[1], ''],
-        [symbols[0], symbols[1], ''],
-        [symbols[0], '', ''],
+        ['X', 'O', ''],
+        ['X', 'O', ''],
+        ['X', '', ''],
       ]);
       expect(state5.winner).toBe('Peter');
     });
@@ -219,9 +218,9 @@ describe('GAME', () => {
         state: state4, row: 2, column: 2, player: 'Peter',
       });
       expect(state5.board).toEqual([
-        [symbols[0], symbols[1], ''],
-        ['', symbols[0], symbols[1]],
-        ['', '', symbols[0]],
+        ['X', 'O', ''],
+        ['', 'X', 'O'],
+        ['', '', 'X'],
       ]);
       expect(state5.winner).toBe('Peter');
     });
@@ -248,9 +247,9 @@ describe('GAME', () => {
         state: state5, row: 2, column: 0, player: 'Paul',
       });
       expect(state6.board).toEqual([
-        [symbols[0], '', symbols[1]],
-        ['', symbols[1], symbols[0]],
-        [symbols[1], '', symbols[0]],
+        ['X', '', 'O'],
+        ['', 'O', 'X'],
+        ['O', '', 'X'],
       ]);
       expect(state6.winner).toBe('Paul');
     });
@@ -280,9 +279,9 @@ describe('GAME', () => {
         state: state6, row: 2, column: 1, player: 'Peter',
       });
       expect(state7.board).toEqual([
-        [symbols[0], '', symbols[1]],
-        ['', symbols[1], symbols[0]],
-        [symbols[1], '', symbols[0]],
+        ['X', '', 'O'],
+        ['', 'O', 'X'],
+        ['O', '', 'X'],
       ]);
       expect(state6.winner).toBe('Paul');
     });
