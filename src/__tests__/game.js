@@ -1,7 +1,7 @@
 import {
   initialState,
   tryToFillSquare,
-  join,
+  joinGame,
 } from '../domain/game';
 
 describe('GAME', () => {
@@ -21,15 +21,15 @@ describe('GAME', () => {
   describe('Join game', () => {
     it('Should add the player to the players list when the player joins the game', () => {
       const state = initialState();
-      expect(join({ state, player: 'Peter' })).toEqual({
+      expect(joinGame({ state, player: 'Peter' })).toEqual({
         ...state,
         X: 'Peter',
       });
     });
     it('Should allow up to two players in a game', () => {
       const state = initialState();
-      const stateWithOnePlayer = join({ state, player: 'Peter' });
-      const stateWithTwoPlayers = join({ state: stateWithOnePlayer, player: 'Paul' });
+      const stateWithOnePlayer = joinGame({ state, player: 'Peter' });
+      const stateWithTwoPlayers = joinGame({ state: stateWithOnePlayer, player: 'Paul' });
       expect(stateWithTwoPlayers).toEqual({
         ...state,
         X: 'Peter',
@@ -38,9 +38,9 @@ describe('GAME', () => {
     });
     it('Should not allow more than two players in a game', () => {
       const state = initialState();
-      const stateWithOnePlayer = join({ state, player: 'Peter' });
-      const stateWithTwoPlayers = join({ state: stateWithOnePlayer, player: 'Paul' });
-      const stateWithStillTwoPlayers = join({ state: stateWithTwoPlayers, player: 'João' });
+      const stateWithOnePlayer = joinGame({ state, player: 'Peter' });
+      const stateWithTwoPlayers = joinGame({ state: stateWithOnePlayer, player: 'Paul' });
+      const stateWithStillTwoPlayers = joinGame({ state: stateWithTwoPlayers, player: 'João' });
       expect(stateWithStillTwoPlayers).toEqual({
         ...state,
         X: 'Peter',
@@ -49,15 +49,15 @@ describe('GAME', () => {
     });
     it('Should not allow null as a player', () => {
       const state = initialState();
-      const stateWithoutPlayers = join({ state, player: null });
+      const stateWithoutPlayers = joinGame({ state, player: null });
       expect(stateWithoutPlayers).toEqual({
         ...state,
       });
     });
     it('Should not allow including the same player twice', () => {
       const state = initialState();
-      const stateWithOnePlayer = join({ state, player: 'Peter' });
-      const stateWithStillOnePlayer = join({ state: stateWithOnePlayer, player: 'Peter' });
+      const stateWithOnePlayer = joinGame({ state, player: 'Peter' });
+      const stateWithStillOnePlayer = joinGame({ state: stateWithOnePlayer, player: 'Peter' });
       expect(stateWithStillOnePlayer).toEqual({
         ...state,
         X: 'Peter',

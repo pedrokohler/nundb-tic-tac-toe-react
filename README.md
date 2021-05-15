@@ -8,6 +8,16 @@ See the [live version](https://pedrokohler.github.io/nundb-tic-tac-toe-react/).
 
 In the home page you can choose a nickname for yourself and the room you want to join. After that you can proceed to the game page and play against any opponent that joins the same room. If you join directly from the url you join as a guest. In order to join as a player you must join the room from the home page and choose a nickname.
 
+## Installation
+
+Before using the app, you must create a .env file in the root folder of the application with the following values
+
+```
+REACT_APP_NUN_DB_URL=
+REACT_APP_NUN_DB_USER=
+REACT_APP_NUN_DB_PWD=
+```
+
 ## Available Scripts
 
 In the project directory, you can run:

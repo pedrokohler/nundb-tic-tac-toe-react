@@ -1,7 +1,7 @@
 import {
   RESET_GAME,
   FILL_SQUARE,
-  JOIN,
+  JOIN_GAME,
   JOIN_ROOM,
   SYNC_GAME_STATE,
 } from './actions';
@@ -27,8 +27,8 @@ export const fillSquare = ({ row, column, player }) => ({
   },
 });
 
-export const join = (player) => ({
-  type: JOIN,
+export const joinGame = (player) => ({
+  type: JOIN_GAME,
   payload: {
     player,
   },
