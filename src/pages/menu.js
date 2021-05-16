@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
@@ -17,8 +17,14 @@ const Container = styled.div`
 `;
 
 const MenuPage = () => {
-  const { room: roomName } = useSelector((store) => store.identification);
+  const { userName, room: roomName } = useSelector((store) => store.identification);
   const dispatch = useDispatch();
+
+  const handleClick = useCallback((e) => {
+    if (!roomName) {
+      e.preventDefault();
+    }
+  }, [roomName]);
 
   return (
     <Container>
@@ -27,7 +33,11 @@ const MenuPage = () => {
           <p>
             Type in your username:
           </p>
-          <input name="userName" onInput={(e) => dispatch(setIdentification(e.target.value))} />
+          <input
+            name="userName"
+            onInput={(e) => dispatch(setIdentification(e.target.value))}
+            value={userName}
+          />
         </label>
       </div>
       <div>
@@ -35,15 +45,15 @@ const MenuPage = () => {
           <p>
             Type in the room name:
           </p>
-          <input name="roomName" onInput={(e) => dispatch(setRoom(e.target.value))} />
+          <input
+            name="roomName"
+            onInput={(e) => dispatch(setRoom(e.target.value))}
+            value={roomName}
+          />
         </label>
         <Link
           to={`/room/${roomName}`}
-          onClick={(e) => {
-            if (!roomName) {
-              e.preventDefault();
-            }
-          }}
+          onClick={handleClick}
         >
           <p>Join room</p>
         </Link>

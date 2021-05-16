@@ -1,7 +1,7 @@
 import {
   initialState,
   tryToFillSquare,
-  join,
+  joinGame,
   joinRoom,
 } from '../../../domain/game';
 
@@ -18,9 +18,9 @@ export const handleFillSquare = (state, action) => {
   return newState;
 };
 
-export const handleJoin = (state, action) => {
+export const handleJoinGame = (state, action) => {
   const { player } = action.payload;
-  const newState = join({ state, player });
+  const newState = joinGame({ state, player });
   return newState;
 };
 

@@ -24,7 +24,7 @@ export const joinRoom = ({ state, roomName }) => ({
   roomName,
 });
 
-export const join = ({ state, player }) => {
+export const joinGame = ({ state, player }) => {
   const hasX = !!state.X;
   if (state.X && state.O) return state;
   if (hasX && state.X === player) return state;
